@@ -18,6 +18,7 @@ public class UserAccountFrame extends JFrame implements ActionListener {
     private JFormattedTextField withdrawField;
     private JButton withdrawBtn;
     private double userBalance = 0;
+    private JButton exitBtn;
     
 	UserAccountFrame() {
         GridBagConstraints positionConst;
@@ -101,6 +102,17 @@ public class UserAccountFrame extends JFrame implements ActionListener {
         positionConst.weightx = 0;
         positionConst.fill = GridBagConstraints.NONE;
         add(withdrawBtn, positionConst);
+// Exit button added        
+        exitBtn = new JButton("Exit");
+        exitBtn.addActionListener(this);
+        positionConst.gridx = 1;
+        positionConst.gridy = 6;
+        positionConst.gridwidth = 2;
+        positionConst.fill = GridBagConstraints.HORIZONTAL;
+        add(exitBtn, positionConst);
+        positionConst.gridwidth = 1;
+        
+        
 // hide deposit and withdrawal items until user enters balance        
         viewTransactions(false);
         
@@ -167,7 +179,11 @@ public class UserAccountFrame extends JFrame implements ActionListener {
         				confirmBalanceLabel.setText(String.format("Withdrawal Successful. New Balance: $%.2f", userBalance));
         				withdrawField.setText("");
         			}
-        		} 
+        			
+        		} else if (e.getSource() == exitBtn) {
+        			JOptionPane.showMessageDialog(this, "Goodbye. Your balance is: $" + String.format("%.2f", userBalance));
+        			System.exit(0);
+        		}
         	} catch (NumberFormatException ex) {
         		JOptionPane.showMessageDialog(this, "Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
 // clear fields in the event of an error
