@@ -57,7 +57,7 @@ public class UserAccountFrame extends JFrame implements ActionListener {
         confirmPanel.add(confirmBalanceLabel, BorderLayout.CENTER);
         
         positionConst.gridx = 0;
-        positionConst.gridy = 1;
+        positionConst.gridy = 3;
         positionConst.gridwidth = 4;
         positionConst.fill = GridBagConstraints.HORIZONTAL;
         add(confirmPanel, positionConst);
@@ -70,14 +70,16 @@ public class UserAccountFrame extends JFrame implements ActionListener {
         depositBtn.addActionListener(this);
         
         positionConst.gridx = 1;
-        positionConst.gridy = 2;
+        positionConst.gridy = 4;
         add(userDepositLabel, positionConst);
         
         positionConst.gridx = 2;
+        positionConst.weightx = 1.0;
         positionConst.fill = GridBagConstraints.HORIZONTAL;
         add(depositField, positionConst);
         
         positionConst.gridx = 3;
+        positionConst.weightx = 0;
         positionConst.fill = GridBagConstraints.NONE;
         add(depositBtn, positionConst);
 // withdrawal entry        
@@ -87,14 +89,16 @@ public class UserAccountFrame extends JFrame implements ActionListener {
         withdrawBtn.addActionListener(this);
         
         positionConst.gridx = 1;
-        positionConst.gridy = 3;
+        positionConst.gridy = 5;
         add(userWithdrawLabel, positionConst);
         
         positionConst.gridx = 2;
+        positionConst.weightx = 1.0;
         positionConst.fill = GridBagConstraints.HORIZONTAL;
         add(withdrawField, positionConst);
         
         positionConst.gridx = 3;
+        positionConst.weightx = 0;
         positionConst.fill = GridBagConstraints.NONE;
         add(withdrawBtn, positionConst);
 // hide deposit and withdrawal items until user enters balance        
