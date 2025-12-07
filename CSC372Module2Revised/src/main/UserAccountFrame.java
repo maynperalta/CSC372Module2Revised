@@ -3,6 +3,7 @@ package main;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.PrintWriter;
 import java.text.NumberFormat;
 
 public class UserAccountFrame extends JFrame implements ActionListener {
@@ -19,26 +20,28 @@ public class UserAccountFrame extends JFrame implements ActionListener {
     private JButton withdrawBtn;
     private double userBalance = 0;
     private JButton exitBtn;
+    private StringBuilder history = new StringBuilder();
     
-	UserAccountFrame() {
+	public UserAccountFrame() {
         GridBagConstraints positionConst;
-        	
         setTitle("User Account Information");
-// set number format for input fields and eliminate comma separator        
-        NumberFormat format = NumberFormat.getNumberInstance();
-        format.setGroupingUsed(false);
-// balance input         	
-        userBalanceLabel = new JLabel("Please Enter Your Balance.");
-        balanceField = new JFormattedTextField(format);
-        balanceField.setEditable(true);
-        balanceField.setText("");
+        
+        balanceField = new JFormattedTextField();
+        depositField = new JFormattedTextField();
+        withdrawField = new JFormattedTextField();
+        
+        balanceField.setColumns(10);
+        depositField.setColumns(10);
+        withdrawField.setColumns(10);
+
         balanceBtn = new JButton("Submit Balance");
         balanceBtn.addActionListener(this);
 // layout for using gridbag system        	
         setLayout(new GridBagLayout());
         positionConst = new GridBagConstraints();
         positionConst.insets = new Insets (10, 10, 10, 10);
-// positioning for balance items               	
+// positioning for balance items       
+        userBalanceLabel = new JLabel("Enter Balance: ");
         positionConst.gridx = 1;
         positionConst.gridy = 0;
         add(userBalanceLabel, positionConst);
@@ -52,6 +55,7 @@ public class UserAccountFrame extends JFrame implements ActionListener {
         positionConst.fill = GridBagConstraints.NONE;
         positionConst.weightx = 0;
         add(balanceBtn, positionConst);
+        
         confirmBalanceLabel = new JLabel("", SwingConstants.CENTER);
 // balance items in separate panel to avoid confines of frame grid        
         JPanel confirmPanel = new JPanel(new BorderLayout());
@@ -66,7 +70,6 @@ public class UserAccountFrame extends JFrame implements ActionListener {
         positionConst.gridwidth = 1;
  // deposit entry        
         userDepositLabel = new JLabel("Deposit Amount: ");
-        depositField = new JFormattedTextField(format);
         depositBtn = new JButton("Deposit");
         depositBtn.addActionListener(this);
         
@@ -85,7 +88,6 @@ public class UserAccountFrame extends JFrame implements ActionListener {
         add(depositBtn, positionConst);
 // withdrawal entry        
         userWithdrawLabel = new JLabel("Withdraw Amount: ");
-        withdrawField = new JFormattedTextField(format);
         withdrawBtn = new JButton("Withdraw");
         withdrawBtn.addActionListener(this);
         
@@ -147,17 +149,20 @@ public class UserAccountFrame extends JFrame implements ActionListener {
 		pack();
 	}
 	
-	private double formattedNumber(JFormattedTextField field) {
-		Number number = (Number) field.getValue();
-		if (number == null) throw new NumberFormatException();
-		return number.doubleValue();
+	private double formattedNumber(JFormattedTextField field) throws NumberFormatException {
+		String number = field.getText().trim();
+		field.setValue(null);
+		field.setText("");
+		if (number.isEmpty()) throw new NumberFormatException();
+		return Double.parseDouble(number);
 	}
 // button action event listeners
         @Override
         public void actionPerformed(ActionEvent e) {
         	try {
         		if (e.getSource() == balanceBtn) {
-        			userBalance = formattedNumber(balanceField);
+        			double balance = formattedNumber(balanceField);
+        			userBalance = balance;
         			confirmBalanceLabel.setText(String.format("Welcome. Your balance is: $%.2f", userBalance));
         			balanceField.setText("");
 // make deposit and withdrawal items visible after balance has been entered        			
@@ -175,7 +180,7 @@ public class UserAccountFrame extends JFrame implements ActionListener {
         			double amount = formattedNumber(withdrawField);
         			if (amount > userBalance) {
         				JOptionPane.showMessageDialog(this, "Insufficient funds.", "Error", JOptionPane.ERROR_MESSAGE);
-        				withdrawField.setText("");
+        				return;
         			} else {
         				userBalance -= amount;
         				confirmBalanceLabel.setText(String.format("Withdrawal Successful. New Balance: $%.2f", userBalance));
@@ -188,10 +193,6 @@ public class UserAccountFrame extends JFrame implements ActionListener {
         		}
         	} catch (NumberFormatException ex) {
         		JOptionPane.showMessageDialog(this, "Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
-// clear fields in the event of an error
-        		balanceField.setText("");
-        		depositField.setText("");
-        		withdrawField.setText("");
         	}     	
         }
 	public static void main(String[] args) {
