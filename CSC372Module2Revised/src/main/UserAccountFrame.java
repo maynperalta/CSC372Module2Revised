@@ -105,13 +105,15 @@ public class UserAccountFrame extends JFrame implements ActionListener {
 // Exit button added        
         exitBtn = new JButton("Exit");
         exitBtn.addActionListener(this);
-        positionConst.gridx = 1;
+        JPanel exitBtnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        exitBtnPanel.add(exitBtn);
+        positionConst.gridx = 0;
         positionConst.gridy = 6;
-        positionConst.gridwidth = 2;
+        positionConst.gridwidth = 4;
         positionConst.fill = GridBagConstraints.HORIZONTAL;
-        add(exitBtn, positionConst);
+        positionConst.anchor = GridBagConstraints.CENTER;
+        add(exitBtnPanel, positionConst);
         positionConst.gridwidth = 1;
-        
         
 // hide deposit and withdrawal items until user enters balance        
         viewTransactions(false);
