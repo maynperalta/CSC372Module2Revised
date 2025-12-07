@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.PrintWriter;
-import java.text.NumberFormat;
 
 public class UserAccountFrame extends JFrame implements ActionListener {
     
@@ -109,6 +108,7 @@ public class UserAccountFrame extends JFrame implements ActionListener {
         exitBtn.addActionListener(this);
         JPanel exitBtnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         exitBtnPanel.add(exitBtn);
+        
         positionConst.gridx = 0;
         positionConst.gridy = 6;
         positionConst.gridwidth = 4;
@@ -120,7 +120,6 @@ public class UserAccountFrame extends JFrame implements ActionListener {
 // hide deposit and withdrawal items until user enters balance        
         viewTransactions(false);
         
-        
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 // set minimum size to ensure items are visible;
         setMinimumSize(new Dimension(400, 200));
@@ -131,7 +130,7 @@ public class UserAccountFrame extends JFrame implements ActionListener {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				JOptionPane.showMessageDialog(null,  String.format("Goodbye. Your balance is: $%.2f", userBalance));
+				exitApplication();
 			}
 		});
     }
@@ -156,6 +155,20 @@ public class UserAccountFrame extends JFrame implements ActionListener {
 		if (number.isEmpty()) throw new NumberFormatException();
 		return Double.parseDouble(number);
 	}
+	
+	private void writeFile() {
+		try (PrintWriter out = new PrintWriter("history.txt")) {
+			out.println(history.toString());
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "File error", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
+	private void exitApplication() {
+		writeFile();
+		JOptionPane.showMessageDialog(this, String.format("Goodbye. Your balance is: $%.2f", userBalance));
+		System.exit(0);
+	}
 // button action event listeners
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -164,7 +177,9 @@ public class UserAccountFrame extends JFrame implements ActionListener {
         			double balance = formattedNumber(balanceField);
         			userBalance = balance;
         			confirmBalanceLabel.setText(String.format("Welcome. Your balance is: $%.2f", userBalance));
-        			balanceField.setText("");
+        			history.append("Initial balance: $")
+        					.append(String.format("%.2f", userBalance))
+        					.append("\n");
 // make deposit and withdrawal items visible after balance has been entered        			
         			viewTransactions(true);
 // hide balance items once entered        	        
@@ -174,8 +189,12 @@ public class UserAccountFrame extends JFrame implements ActionListener {
         		} else if (e.getSource() == depositBtn) {
         			double amount = formattedNumber(depositField);
         			userBalance += amount;
+        			history.append("Deposit: %")
+        					.append(String.format("%.2f", amount))
+        					.append(" | New balance: $")
+        					.append(String.format("%.2f", userBalance))
+        					.append("\n");
         			confirmBalanceLabel.setText(String.format("Deposit Successful. New Balance: $%.2f", userBalance));
-        			depositField.setText("");
         		} else if (e.getSource() == withdrawBtn) {
         			double amount = formattedNumber(withdrawField);
         			if (amount > userBalance) {
@@ -183,13 +202,16 @@ public class UserAccountFrame extends JFrame implements ActionListener {
         				return;
         			} else {
         				userBalance -= amount;
+        				history.append("Withdraw: $")
+        						.append(String.format("%.2f", amount))
+        						.append(" | New balance: $")
+        						.append(String.format("%.2f", userBalance))
+        						.append("\n");        						
         				confirmBalanceLabel.setText(String.format("Withdrawal Successful. New Balance: $%.2f", userBalance));
-        				withdrawField.setText("");
         			}
         			
         		} else if (e.getSource() == exitBtn) {
-        			JOptionPane.showMessageDialog(this, "Goodbye. Your balance is: $" + String.format("%.2f", userBalance));
-        			System.exit(0);
+        			exitApplication();
         		}
         	} catch (NumberFormatException ex) {
         		JOptionPane.showMessageDialog(this, "Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
