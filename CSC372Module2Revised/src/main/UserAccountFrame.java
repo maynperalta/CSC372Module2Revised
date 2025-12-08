@@ -25,7 +25,7 @@ public class UserAccountFrame extends JFrame implements ActionListener {
 	public UserAccountFrame() {
         GridBagConstraints positionConst;
         setTitle("User Account Information");
-        
+// using JFormattedTextField for better input handling        
         balanceField = new JFormattedTextField();
         depositField = new JFormattedTextField();
         withdrawField = new JFormattedTextField();
@@ -33,7 +33,7 @@ public class UserAccountFrame extends JFrame implements ActionListener {
         balanceField.setColumns(10);
         depositField.setColumns(10);
         withdrawField.setColumns(10);
-        
+// Pressing enter key performs button click         
         balanceField.addActionListener(e -> balanceBtn.doClick());
         depositField.addActionListener(e -> depositBtn.doClick());
         withdrawField.addActionListener(e -> withdrawBtn.doClick());
@@ -121,17 +121,15 @@ public class UserAccountFrame extends JFrame implements ActionListener {
         positionConst.anchor = GridBagConstraints.CENTER;
         add(exitBtnPanel, positionConst);
         positionConst.gridwidth = 1;
-        
 // hide deposit and withdrawal items until user enters balance        
-        viewTransactions(false);
-        
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        viewTransactions(false);           
 // set minimum size to ensure items are visible;
         setMinimumSize(new Dimension(400, 200));
 // allow frame to dynamically resize        
 		pack();
 		setVisible(true);
-// popup for final balance when user closes frame		
+// call exitApplication method when frame closed
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -139,7 +137,7 @@ public class UserAccountFrame extends JFrame implements ActionListener {
 			}
 		});
     }
-	
+// method to handle showing and hiding of other panel elements	
 	private void viewTransactions(boolean visible) {
 		userDepositLabel.setVisible(visible);
 		depositField.setVisible(visible);
@@ -152,7 +150,7 @@ public class UserAccountFrame extends JFrame implements ActionListener {
 		repaint();
 		pack();
 	}
-	
+// method to handle input validation	
 	private double formattedNumber(JFormattedTextField field) throws NumberFormatException {
 		String number = field.getText().trim();
 		field.setValue(null);
@@ -160,7 +158,7 @@ public class UserAccountFrame extends JFrame implements ActionListener {
 		if (number.isEmpty()) throw new NumberFormatException();
 		return Double.parseDouble(number);
 	}
-	
+// write transaction history to file	
 	private void writeFile() {
 		try {
 			File file = new File("history.txt");
@@ -172,7 +170,7 @@ public class UserAccountFrame extends JFrame implements ActionListener {
 			JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "File error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+// method to exit application 	
 	private void exitApplication() {
 		writeFile();
 		JOptionPane.showMessageDialog(this, String.format("Goodbye. Your balance is: $%.2f", userBalance));
@@ -218,7 +216,7 @@ public class UserAccountFrame extends JFrame implements ActionListener {
         						.append("\n");        						
         				confirmBalanceLabel.setText(String.format("Withdrawal Successful. New Balance: $%.2f", userBalance));
         			}
-        			
+// exit button will close application on click        			
         		} else if (e.getSource() == exitBtn) {
         			exitApplication();
         		}
