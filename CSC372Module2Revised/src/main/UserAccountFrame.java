@@ -3,6 +3,7 @@ package main;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.io.PrintWriter;
 
 public class UserAccountFrame extends JFrame implements ActionListener {
@@ -157,8 +158,12 @@ public class UserAccountFrame extends JFrame implements ActionListener {
 	}
 	
 	private void writeFile() {
-		try (PrintWriter out = new PrintWriter("history.txt")) {
-			out.println(history.toString());
+		try {
+			File file = new File("history.txt");
+			try (PrintWriter out = new PrintWriter(file)) {
+				out.println(history.toString());
+			}
+			System.out.println("Transaction history saved to: " + file.getAbsolutePath());
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "File error", JOptionPane.ERROR_MESSAGE);
 		}
