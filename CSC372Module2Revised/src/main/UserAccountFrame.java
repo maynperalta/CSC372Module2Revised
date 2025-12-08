@@ -33,6 +33,10 @@ public class UserAccountFrame extends JFrame implements ActionListener {
         balanceField.setColumns(10);
         depositField.setColumns(10);
         withdrawField.setColumns(10);
+        
+        balanceField.addActionListener(e -> balanceBtn.doClick());
+        depositField.addActionListener(e -> depositBtn.doClick());
+        withdrawField.addActionListener(e -> withdrawBtn.doClick());
 
         balanceBtn = new JButton("Submit Balance");
         balanceBtn.addActionListener(this);
@@ -194,7 +198,7 @@ public class UserAccountFrame extends JFrame implements ActionListener {
         		} else if (e.getSource() == depositBtn) {
         			double amount = formattedNumber(depositField);
         			userBalance += amount;
-        			history.append("Deposit: %")
+        			history.append("Deposit: $")
         					.append(String.format("%.2f", amount))
         					.append(" | New balance: $")
         					.append(String.format("%.2f", userBalance))
